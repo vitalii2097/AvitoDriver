@@ -1,6 +1,6 @@
 package me.veppev.avitodriver;
 
-public class AvitoUrl implements Url {
+public class AvitoUrl {
 
     private String url;
 
@@ -8,8 +8,7 @@ public class AvitoUrl implements Url {
         this.url = url;
     }
 
-    @Override
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 

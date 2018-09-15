@@ -1,9 +1,12 @@
-package me.veppev.avitodriver.net;
+package me.veppev.avitodriver;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Представляет объявление с авито. Загружает информацию по "требованию"
+ */
 public class Announcement {
 
     private String name;

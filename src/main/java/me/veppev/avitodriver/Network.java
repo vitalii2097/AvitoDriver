@@ -1,4 +1,4 @@
-package me.veppev.avitodriver.net;
+package me.veppev.avitodriver;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.fluent.Request;

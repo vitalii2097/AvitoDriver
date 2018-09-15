@@ -1,4 +1,4 @@
-package me.veppev.avitodriver.net;
+package me.veppev.avitodriver;
 
 import javafx.util.Pair;
 import org.apache.http.HttpHost;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class ProxyList {
+class ProxyList {
 
     private Network network = new Network("http://www.gatherproxy.com/proxylist/country/?c=Russia");
     private LinkedHashSet<String> usedIPs = new LinkedHashSet<>();

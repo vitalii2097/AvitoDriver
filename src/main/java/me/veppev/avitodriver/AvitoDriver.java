@@ -1,11 +1,15 @@
-package me.veppev.avitodriver.net;
+package me.veppev.avitodriver;
 
-import avito.Url;
 import org.apache.http.HttpHost;
 
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Класс для взаимодействия с сайтом avito.ru
+ * Предоставляет методы для загрузки объявлений
+ * TODO вход по аккаунту, отправка сообщений
+ */
 public class AvitoDriver {
 
     private Map<String, Announcement> announcementMap = new HashMap<>();
@@ -16,7 +20,12 @@ public class AvitoDriver {
         proxy = proxyList.getProxyServer();
     }
 
-    public List<Announcement> getAnnouncements(Url avitoUrl) {
+    /**
+     * Загружает все объявления по заданной ссылке на авито
+     * @param avitoUrl ссылка на поиск авито
+     * @return лист с объявлениями
+     */
+    public List<Announcement> getAnnouncements(AvitoUrl avitoUrl) {
         String url = avitoUrl.getUrl();
 
         String html;

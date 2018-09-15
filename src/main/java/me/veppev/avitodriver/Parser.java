@@ -1,4 +1,4 @@
-package me.veppev.avitodriver.net;
+package me.veppev.avitodriver;
 
 import java.util.ArrayList;
 import java.util.Collections;
