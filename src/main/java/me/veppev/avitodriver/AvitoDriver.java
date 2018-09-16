@@ -3,6 +3,7 @@ package me.veppev.avitodriver;
 import org.apache.http.HttpHost;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -15,6 +16,12 @@ public class AvitoDriver {
     private Map<String, Announcement> announcementMap = new HashMap<>();
     private volatile HttpHost proxy;
     private final ProxyList proxyList = new ProxyList();
+
+    private static AvitoDriver avitoDriver = new AvitoDriver();
+
+    public static AvitoDriver getInstance() {return avitoDriver;}
+
+    private AvitoDriver() {}
 
     private void changeIP() {
         proxy = proxyList.getProxyServer();
@@ -78,6 +85,14 @@ public class AvitoDriver {
             announcement.setMetro("Не удалось загрузить станцию метро");
         }
 
+    }
+
+    String loadAvitoPage(String url) throws IOException {
+        try {
+            return Network.loadPage(url, proxy);
+        } catch (UnknownHostException e) {
+            throw new IllegalStateException("Нет подключения к интернету");
+        }
     }
 
 }

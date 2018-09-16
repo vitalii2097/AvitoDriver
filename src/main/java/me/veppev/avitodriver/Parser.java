@@ -119,4 +119,8 @@ class Parser {
         }
     }
 
+    static boolean checkNotFoundPage(String code) {
+        return code.contains("<title>Ошибка 404. Страница не найдена &#8212; Объявления на сайте Авито</title>");
+    }
+
 }
