@@ -19,11 +19,12 @@ public class AvitoDriverTest {
 
     @Test
     public void getAnnouncements() {
-        AvitoUrl iphones = createUrl("https://www.avito.ru/rossiya/telefony/iphone?user=1&s_trg=3&q=iphone+6&s=104");
+        AvitoUrl iphones = createUrl("https://www.avito.ru/rossiya/telefony/iphone?user=1&s_trg=3&q=iphone&s=104");
         assertNotNull(iphones);
         AvitoDriver driver = AvitoDriver.getInstance();
         List<Announcement> announcements = driver.getAnnouncements(iphones);
         assertTrue(announcements.size() > 0);
+        System.out.println(announcements.get(0).getName());
     }
 
 }

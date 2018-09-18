@@ -22,6 +22,7 @@ public class Announcement {
 
     private synchronized void load() {
         if (!loaded && driver != null) {
+            System.out.println("Загрузка объявления "+ this.url);
             driver.loadAnnouncement(this);
             loaded = true;
         }

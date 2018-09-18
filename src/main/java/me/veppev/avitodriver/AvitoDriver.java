@@ -27,6 +27,12 @@ public class AvitoDriver {
         proxy = proxyList.getProxyServer();
     }
 
+    private boolean checkBlock(String html) {
+        return html.contains("<title>Доступ временно заблокирован</title>")
+                || html.contains("<h1>Подождите, идет загрузка.</h1>")
+                || html.contains("<title>400 Bad Request</title>");
+    }
+
     /**
      * Загружает все объявления по заданной ссылке на авито
      * @param avitoUrl ссылка на поиск авито
@@ -79,16 +85,15 @@ public class AvitoDriver {
 
     void loadAnnouncement(Announcement announcement) {
         String url = announcement.getUrl();
-        Network network = new Network(url);
         try {
-            String html = network.getPage();
+            String html = Network.loadPage(url, proxy);
             announcement.setName(Parser.getName(html));
             announcement.setDescription(Parser.getDescription(html));
             announcement.setPrice(Parser.getPrice(html));
             announcement.setImageUrl(Parser.getImageUrls(html));
             announcement.setMetro(Parser.getMetro(html));
             announcement.setOwnerName(Parser.getOwnerName(html));
-        } catch (IOException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (IOException | IllegalArgumentException e) {
             announcement.setDescription("Не удалось загрузить описание");
             announcement.setName("Не удалось загрузить название");
             announcement.setPrice(0);
