@@ -41,8 +41,15 @@ public class AvitoDriver {
         } catch (IOException e) {
             return Collections.emptyList();
         }
-        if (html.contains("<title>Доступ временно заблокирован</title>") ) {
+        if (html.contains("<title>Доступ временно заблокирован</title>")
+                || html.contains("<h1>Подождите, идет загрузка.</h1>")) {
             System.out.println("Авито заблокрировало доступ, сменяем ip");
+            changeIP();
+            return getAnnouncements(avitoUrl);
+        }
+
+        if (html.contains("<title>400 Bad Request</title>")) {
+            System.out.println("Bad request. Смена IP");
             changeIP();
             return getAnnouncements(avitoUrl);
         }
