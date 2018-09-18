@@ -77,7 +77,7 @@ public class AvitoDriver {
             announcement.setImageUrl(Parser.getImageUrls(html));
             announcement.setMetro(Parser.getMetro(html));
             announcement.setOwnerName(Parser.getOwnerName(html));
-        } catch (IOException | IllegalAccessException e) {
+        } catch (IOException | IllegalArgumentException | IllegalAccessException e) {
             announcement.setDescription("Не удалось загрузить описание");
             announcement.setName("Не удалось загрузить название");
             announcement.setPrice(0);

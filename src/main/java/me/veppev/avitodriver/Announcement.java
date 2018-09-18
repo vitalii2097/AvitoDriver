@@ -20,7 +20,7 @@ public class Announcement {
     private boolean loaded = false;
     private AvitoDriver driver;
 
-    private void load() {
+    private synchronized void load() {
         if (!loaded && driver != null) {
             driver.loadAnnouncement(this);
             loaded = true;
