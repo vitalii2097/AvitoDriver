@@ -3,7 +3,8 @@ package me.veppev.avitodriver;
 import org.apache.http.HttpHost;
 import org.apache.logging.log4j.*;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
 
@@ -131,6 +132,28 @@ public class AvitoDriver {
             driverLogger.error("Не удалось корректно загрузить объявление {}", announcement.getUrl());
         }
 
+    }
+
+    public File downloadImage(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        InputStream is = url.openStream();
+
+        File file = new File(System.nanoTime() + ".jpg");
+        //noinspection ResultOfMethodCallIgnored
+        file.createNewFile();
+        OutputStream os = new FileOutputStream(file);
+
+        byte[] b = new byte[2048];
+        int length;
+
+        while ((length = is.read(b)) != -1) {
+            os.write(b, 0, length);
+        }
+
+        is.close();
+        os.close();
+
+        return file;
     }
 
     String loadAvitoPage(String url) throws IOException {
