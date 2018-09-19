@@ -2,6 +2,8 @@ package me.veppev.avitodriver;
 
 import javafx.util.Pair;
 import org.apache.http.HttpHost;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -9,16 +11,16 @@ import java.util.List;
 
 class ProxyList {
 
-    private Network network = new Network("http://www.gatherproxy.com/proxylist/country/?c=Russia");
+    static final Logger proxyLogger = LogManager.getLogger(ProxyList.class.getSimpleName());
     private LinkedHashSet<String> usedIPs = new LinkedHashSet<>();
 
     HttpHost getProxyServer() {
         String html;
 
         try {
-            html = network.getPage();
-        } catch (IOException | IllegalAccessException e) {
-            e.printStackTrace();
+            html = Network.loadPage("http://www.gatherproxy.com/proxylist/country/?c=Russia", null);
+        } catch (IOException e) {
+            proxyLogger.error("Не удалось загрузить сайт с прокси", e);
             return null;
         }
 

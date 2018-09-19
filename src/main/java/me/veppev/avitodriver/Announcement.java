@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.logging.log4j.*;
+
 /**
  * Представляет объявление с авито. Загружает информацию по "требованию"
  */
@@ -16,13 +18,14 @@ public class Announcement {
     private List<String> imageUrls;
     private String metro;
     private String ownerName;
+    static final Logger annLoger = LogManager.getLogger(Announcement.class.getSimpleName());
 
     private boolean loaded = false;
     private AvitoDriver driver;
 
     private synchronized void load() {
         if (!loaded && driver != null) {
-            System.out.println("Загрузка объявления "+ this.url);
+            annLoger.info("Загрузка объявления "+ this.url);
             driver.loadAnnouncement(this);
             loaded = true;
         }

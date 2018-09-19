@@ -1,6 +1,7 @@
 package me.veppev.avitodriver;
 
 import org.apache.http.HttpHost;
+import org.apache.logging.log4j.*;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -17,14 +18,25 @@ public class AvitoDriver {
     private volatile HttpHost proxy;
     private final ProxyList proxyList = new ProxyList();
 
+    static final Logger driverLogger = LogManager.getLogger(AvitoDriver.class.getSimpleName());
     private static AvitoDriver avitoDriver = new AvitoDriver();
 
-    public static AvitoDriver getInstance() {return avitoDriver;}
+    public static AvitoDriver getInstance() {
+        return avitoDriver;
+    }
 
-    private AvitoDriver() {}
+    private AvitoDriver() {
+        driverLogger.debug("Создан объект драйвера");
+    }
 
     private void changeIP() {
-        proxy = proxyList.getProxyServer();
+        try {
+            proxy = proxyList.getProxyServer();
+            driverLogger.warn("Сменён ip на {}", proxy);
+        } catch (Exception e) {
+            proxy = null;
+            driverLogger.error("Не удалось загрузить новое прокси", e);
+        }
     }
 
     private boolean checkBlock(String html) {
@@ -39,26 +51,31 @@ public class AvitoDriver {
      * @return лист с объявлениями
      */
     public List<Announcement> getAnnouncements(AvitoUrl avitoUrl) {
+        driverLogger.info("Начало загрузки объявлений по адресу {}", avitoUrl);
         String url = avitoUrl.getUrl();
 
         String html;
         try {
             html = Network.loadPage(url, proxy);
         } catch (IOException e) {
+            driverLogger.error("Не удалось загрузить страницу по адресу {}", avitoUrl);
+            changeIP();
             return Collections.emptyList();
         }
         if (html.contains("<title>Доступ временно заблокирован</title>")
                 || html.contains("<h1>Подождите, идет загрузка.</h1>")) {
-            System.out.println("Авито заблокрировало доступ, сменяем ip");
+            driverLogger.error("Авито заблокрировало доступ. Смена IP");
             changeIP();
             return getAnnouncements(avitoUrl);
         }
 
         if (html.contains("<title>400 Bad Request</title>")) {
-            System.out.println("Bad request. Смена IP");
+            driverLogger.error("Bad request. Смена IP");
             changeIP();
             return getAnnouncements(avitoUrl);
         }
+
+        driverLogger.info("Загружена корректная страница по ссылке {}", avitoUrl);
 
         int countNewAnnouncements = 0;
 
@@ -73,11 +90,14 @@ public class AvitoDriver {
                 countNewAnnouncements++;
             }
         }
-        System.out.println("Loaded " + announcements.size() + " announcements by url=" + avitoUrl.getUrl()
-                + "; new ann. =" + countNewAnnouncements + "; " + new Date());
 
         if (announcements.size() == 0) {
-            System.out.println(html);
+            driverLogger.warn("Не было загружено ни одного объявления по {}\n{}", avitoUrl, html);
+        } else {
+            driverLogger.info("Загружено {} объявлений по ссылке {}. Новых {} штук",
+                    announcements.size(),
+                    avitoUrl,
+                    countNewAnnouncements);
         }
 
         return announcements;
@@ -87,18 +107,28 @@ public class AvitoDriver {
         String url = announcement.getUrl();
         try {
             String html = Network.loadPage(url, proxy);
+
+            if (checkBlock(html)) {
+                driverLogger.warn("При загрузке объявления {} авито заблокировало доступ", url);
+                changeIP();
+                loadAnnouncement(announcement);
+                return;
+            }
+
             announcement.setName(Parser.getName(html));
             announcement.setDescription(Parser.getDescription(html));
             announcement.setPrice(Parser.getPrice(html));
             announcement.setImageUrl(Parser.getImageUrls(html));
             announcement.setMetro(Parser.getMetro(html));
             announcement.setOwnerName(Parser.getOwnerName(html));
+            driverLogger.info("Объявление по ссылке {} успешно загружено", announcement.getUrl());
         } catch (IOException | IllegalArgumentException e) {
             announcement.setDescription("Не удалось загрузить описание");
             announcement.setName("Не удалось загрузить название");
             announcement.setPrice(0);
             announcement.setOwnerName("Не удалось загрузить имя продавца");
             announcement.setMetro("Не удалось загрузить станцию метро");
+            driverLogger.error("Не удалось корректно загрузить объявление {}", announcement.getUrl());
         }
 
     }
