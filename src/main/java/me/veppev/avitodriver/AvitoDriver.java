@@ -120,11 +120,7 @@ public class AvitoDriver {
             announcement.setName(Parser.getName(html));
             announcement.setDescription(Parser.getDescription(html));
             announcement.setPrice(Parser.getPrice(html));
-
-            List<String> imageUrls = Parser.getImageUrls(html);
-            List<File> images = imageUrls.stream().map(this::downloadImage).collect(Collectors.toList());
-
-            announcement.setImageUrl(images);
+            announcement.setImageUrl(Parser.getImageUrls(html));
             announcement.setMetro(Parser.getMetro(html));
             announcement.setOwnerName(Parser.getOwnerName(html));
             driverLogger.info("Объявление по ссылке {} успешно загружено", announcement.getUrl());

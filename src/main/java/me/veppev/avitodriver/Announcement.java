@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
 
@@ -16,7 +17,7 @@ public class Announcement {
     private String description;
     private int price;
     private String url;
-    private List<File> imageUrls;
+    private List<String> imageUrls;
     private String metro;
     private String ownerName;
     static final Logger annLoger = LogManager.getLogger(Announcement.class.getSimpleName());
@@ -28,6 +29,7 @@ public class Announcement {
         if (!loaded && driver != null) {
             annLoger.info("Загрузка объявления "+ this.url);
             driver.loadAnnouncement(this);
+
             loaded = true;
         }
     }
@@ -62,7 +64,7 @@ public class Announcement {
     }
 
     public List<File> getImageUrls() {
-        return imageUrls;
+        return imageUrls.stream().map(driver::downloadImage).collect(Collectors.toList());
     }
 
     public String getMetro() {
@@ -85,7 +87,7 @@ public class Announcement {
         this.price = price;
     }
 
-    void setImageUrl(List<File> urls) {
+    void setImageUrl(List<String> urls) {
         imageUrls = urls;
     }
 
