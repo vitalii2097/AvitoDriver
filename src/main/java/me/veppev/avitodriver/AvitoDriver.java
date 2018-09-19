@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс для взаимодействия с сайтом avito.ru
@@ -119,7 +120,11 @@ public class AvitoDriver {
             announcement.setName(Parser.getName(html));
             announcement.setDescription(Parser.getDescription(html));
             announcement.setPrice(Parser.getPrice(html));
-            announcement.setImageUrl(Parser.getImageUrls(html));
+
+            List<String> imageUrls = Parser.getImageUrls(html);
+            List<File> images = imageUrls.stream().map(this::downloadImage).collect(Collectors.toList());
+
+            announcement.setImageUrl(images);
             announcement.setMetro(Parser.getMetro(html));
             announcement.setOwnerName(Parser.getOwnerName(html));
             driverLogger.info("Объявление по ссылке {} успешно загружено", announcement.getUrl());
@@ -134,26 +139,31 @@ public class AvitoDriver {
 
     }
 
-    public File downloadImage(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
-        InputStream is = url.openStream();
+    public File downloadImage(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            InputStream is = url.openStream();
 
-        File file = new File(System.nanoTime() + ".jpg");
-        //noinspection ResultOfMethodCallIgnored
-        file.createNewFile();
-        OutputStream os = new FileOutputStream(file);
+            File file = new File(System.nanoTime() + ".jpg");
+            //noinspection ResultOfMethodCallIgnored
+            file.createNewFile();
+            OutputStream os = new FileOutputStream(file);
 
-        byte[] b = new byte[2048];
-        int length;
+            byte[] b = new byte[2048];
+            int length;
 
-        while ((length = is.read(b)) != -1) {
-            os.write(b, 0, length);
+            while ((length = is.read(b)) != -1) {
+                os.write(b, 0, length);
+            }
+
+            is.close();
+            os.close();
+
+            return file;
+        } catch (IOException e) {
+            driverLogger.error(e);
+            return null;
         }
-
-        is.close();
-        os.close();
-
-        return file;
     }
 
     String loadAvitoPage(String url) throws IOException {

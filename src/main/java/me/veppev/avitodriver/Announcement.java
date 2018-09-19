@@ -1,5 +1,6 @@
 package me.veppev.avitodriver;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,7 @@ public class Announcement {
     private String description;
     private int price;
     private String url;
-    private List<String> imageUrls;
+    private List<File> imageUrls;
     private String metro;
     private String ownerName;
     static final Logger annLoger = LogManager.getLogger(Announcement.class.getSimpleName());
@@ -60,7 +61,7 @@ public class Announcement {
         return price;
     }
 
-    public List<String> getImageUrls() {
+    public List<File> getImageUrls() {
         return imageUrls;
     }
 
@@ -84,7 +85,7 @@ public class Announcement {
         this.price = price;
     }
 
-    void setImageUrl(List<String> urls) {
+    void setImageUrl(List<File> urls) {
         imageUrls = urls;
     }
 
