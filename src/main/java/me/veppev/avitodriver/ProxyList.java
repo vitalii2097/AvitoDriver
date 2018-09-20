@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-class ProxyList {
+public class ProxyList {
 
     static final Logger proxyLogger = LogManager.getLogger(ProxyList.class.getSimpleName());
     private LinkedHashSet<String> usedIPs = new LinkedHashSet<>();
