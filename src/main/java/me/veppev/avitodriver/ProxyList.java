@@ -14,7 +14,7 @@ public class ProxyList {
     static final Logger proxyLogger = LogManager.getLogger(ProxyList.class.getSimpleName());
     private LinkedHashSet<String> usedIPs = new LinkedHashSet<>();
 
-    HttpHost getProxyServer() {
+    public HttpHost getProxyServer() {
         String html;
 
         try {
