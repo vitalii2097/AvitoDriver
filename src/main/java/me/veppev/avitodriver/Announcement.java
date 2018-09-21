@@ -64,8 +64,8 @@ public class Announcement {
         return price;
     }
 
-    public List<File> getImageUrls() {
-        return imageUrls.stream().map(driver::downloadImage).collect(Collectors.toList());
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
 
     public String getMetro() {
