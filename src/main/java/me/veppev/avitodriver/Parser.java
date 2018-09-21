@@ -51,7 +51,11 @@ class Parser {
 
     static String getName(String code) {
         String pattern = "<span class=\"title-info-title-text\" itemprop=\"name\">?</span>";
-        return findValue(code, pattern);
+        try {
+            return findValue(code, pattern);
+        } catch (IllegalArgumentException e) {
+            return "No name";
+        }
     }
 
     static int getId(String code) {
@@ -71,7 +75,7 @@ class Parser {
         try {
             return findValue(code, pattern);
         } catch (IllegalArgumentException e) {
-            return "Без адреса";
+            return "No address";
         }
     }
 
@@ -82,7 +86,7 @@ class Parser {
         try {
             return findValue(code, pattern);
         } catch (IllegalArgumentException e) {
-            return "Без имени";
+            return "No owner name";
         }
     }
 
@@ -97,11 +101,15 @@ class Parser {
                     .replace("<p>", "");
         } catch (IllegalArgumentException e) {
             pattern = "<div class=\"item-description-html\" itemprop=\"description\">?</div>";
-            return findValue(code, pattern)
-                    .replace("<br>", "\n")
-                    .replace("<br />", "\n")
-                    .replace("</p>", "\n")
-                    .replace("<p>", "");
+            try {
+                return findValue(code, pattern)
+                        .replace("<br>", "\n")
+                        .replace("<br />", "\n")
+                        .replace("</p>", "\n")
+                        .replace("<p>", "");
+            } catch (IllegalArgumentException ex) {
+                return "No description";
+            }
         }
     }
 

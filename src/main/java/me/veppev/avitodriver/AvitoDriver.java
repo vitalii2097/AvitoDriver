@@ -152,7 +152,7 @@ public class AvitoDriver {
             announcement.setOwnerName(Parser.getOwnerName(html));
             announcement.setId(Parser.getId(html));
             driverLogger.info("Объявление по ссылке {} успешно загружено", announcement.getUrl());
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException e) {
             announcement.setDescription("Не удалось загрузить описание");
             announcement.setName("Не удалось загрузить название");
             announcement.setPrice(0);
