@@ -37,6 +37,7 @@ class Network {
             request.viaProxy(proxy);
         }
 
+        //TODO тут вылетает HttpHostConnectException
         Response response = request.execute();
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(response.returnResponse().getEntity().getContent()));

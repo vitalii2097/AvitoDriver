@@ -1,5 +1,7 @@
 package me.veppev.avitodriver;
 
+import me.veppev.avitodriver.exception.AnnouncementClosed;
+import me.veppev.avitodriver.exception.AnnouncementNotExist;
 import org.apache.http.HttpHost;
 import org.apache.logging.log4j.*;
 
@@ -23,6 +25,9 @@ public class AvitoDriver {
     static final Logger driverLogger = LogManager.getLogger(AvitoDriver.class.getSimpleName());
     private static AvitoDriver avitoDriver = new AvitoDriver();
 
+    public static final String DOMAIN = "https://avito.ru/";
+    public static final String MOB_DOMAIN = "https://m.avito.ru/";
+
     public static AvitoDriver getInstance() {
         return avitoDriver;
     }
@@ -44,7 +49,8 @@ public class AvitoDriver {
     private boolean checkBlock(String html) {
         return html.contains("<title>Доступ временно заблокирован</title>")
                 || html.contains("<h1>Подождите, идет загрузка.</h1>")
-                || html.contains("<title>400 Bad Request</title>");
+                || html.contains("<title>400 Bad Request</title>")
+                || html.contains("alt=\"Доступ временно ограничен\"");
     }
 
     /**
@@ -62,7 +68,8 @@ public class AvitoDriver {
         } catch (IOException e) {
             driverLogger.error("Не удалось загрузить страницу по адресу {}", avitoUrl);
             changeIP();
-            return Collections.emptyList();
+            return getAnnouncements(avitoUrl);
+            //return Collections.emptyList();
         }
         if (html.contains("<title>Доступ временно заблокирован</title>")
                 || html.contains("<h1>Подождите, идет загрузка.</h1>")) {
@@ -105,6 +112,26 @@ public class AvitoDriver {
         return announcements;
     }
 
+    public Announcement loadAnnouncement(int id) throws IOException, AnnouncementClosed, AnnouncementNotExist {
+        String page = Network.loadPage(MOB_DOMAIN + id, proxy);
+        if (page.contains("Ой! Такой страницы нет :(")) {
+            throw new AnnouncementClosed();
+        }
+        if (page.contains("Авито &mdash; страница не найдена")) {
+            throw new AnnouncementNotExist();
+        }
+
+        if (checkBlock(page)) {
+            driverLogger.warn("При загрузке объявления с id={} авито заблокировало доступ", id);
+            changeIP();
+            return loadAnnouncement(id);
+        }
+
+        String url = Parser.findValue(page, "<meta data-react-helmet=\"true\" property=\"og:url\" content=\"?\"");
+
+        return new Announcement(url, this);
+    }
+
     void loadAnnouncement(Announcement announcement) {
         String url = announcement.getUrl();
         try {
@@ -123,6 +150,7 @@ public class AvitoDriver {
             announcement.setImageUrl(Parser.getImageUrls(html));
             announcement.setMetro(Parser.getMetro(html));
             announcement.setOwnerName(Parser.getOwnerName(html));
+            announcement.setId(Parser.getId(html));
             driverLogger.info("Объявление по ссылке {} успешно загружено", announcement.getUrl());
         } catch (IOException | IllegalArgumentException e) {
             announcement.setDescription("Не удалось загрузить описание");

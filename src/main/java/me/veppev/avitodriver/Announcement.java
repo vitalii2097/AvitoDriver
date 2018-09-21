@@ -13,6 +13,7 @@ import org.apache.logging.log4j.*;
  */
 public class Announcement {
 
+    private int id;
     private String name;
     private String description;
     private int price;
@@ -97,6 +98,15 @@ public class Announcement {
 
     void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public int getId() {
+        load();
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

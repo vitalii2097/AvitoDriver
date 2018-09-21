@@ -54,6 +54,16 @@ class Parser {
         return findValue(code, pattern);
     }
 
+    static int getId(String code) {
+        String pattern = "data-item-id=\"?\"";
+        try {
+            String id = findValue(code, pattern);
+            return Integer.parseInt(id);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
+    }
+
     static String getMetro(String code) {
         String pattern = "<div class=\"seller-info-label\">Адрес</div> <div class=\"seller-info-value\">\n" +
                 " ?\n" +
