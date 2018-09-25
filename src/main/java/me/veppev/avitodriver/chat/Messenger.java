@@ -75,6 +75,9 @@ public class Messenger {
             WebElement inputField = null;
             while (!finded) {
                 try {
+                    if (driver.findElementsByClassName("notify-warning").size() != 0) {
+                        return;
+                    }
                     inputField = driver.findElementByTagName("textarea");
                     finded = true;
                 } catch (NoSuchElementException ignored) {
