@@ -1,6 +1,7 @@
 package me.veppev.avitodriver;
 
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.logging.log4j.LogManager;
@@ -39,8 +40,12 @@ class Network {
 
         //TODO тут вылетает HttpHostConnectException
         Response response = request.execute();
+        HttpResponse httpResponse = response.returnResponse();
+        if (httpResponse.getStatusLine().getStatusCode() == 204) {
+            return "";
+        }
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(response.returnResponse().getEntity().getContent()));
+                new InputStreamReader(httpResponse.getEntity().getContent()));
         String inputLine;
         StringBuilder responseBuilder = new StringBuilder();
 

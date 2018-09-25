@@ -1,13 +1,19 @@
 package me.veppev.avitodriver;
 
+import me.veppev.avitodriver.chat.Chat;
+import me.veppev.avitodriver.chat.Listener;
+import me.veppev.avitodriver.chat.Messenger;
 import me.veppev.avitodriver.exception.AnnouncementClosed;
 import me.veppev.avitodriver.exception.AnnouncementNotExist;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.veppev.avitodriver.AvitoDriver.MOB_DOMAIN;
 import static org.junit.Assert.*;
 
 public class AvitoDriverTest {
@@ -75,6 +81,19 @@ public class AvitoDriverTest {
             }
 
 
+    }
+
+    @Test
+    public void getMessenger() throws IOException, AnnouncementClosed, AnnouncementNotExist {
+        Listener listener = (chat, message) -> System.out.println(chat.getId() + ": " + message);
+
+        Messenger messenger = AvitoDriver.getInstance()
+                .getMessenger("vepppev4@rambler.ru", "Veppev1997", listener);
+
+        Chat chat = messenger.getChat(AvitoDriver.getInstance().loadAnnouncement(960211429));
+
+        chat.send("Привет");
+        chat.send("Как дела?");
     }
 
 }

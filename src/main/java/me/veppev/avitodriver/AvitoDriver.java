@@ -1,5 +1,7 @@
 package me.veppev.avitodriver;
 
+import me.veppev.avitodriver.chat.Listener;
+import me.veppev.avitodriver.chat.Messenger;
 import me.veppev.avitodriver.exception.AnnouncementClosed;
 import me.veppev.avitodriver.exception.AnnouncementNotExist;
 import org.apache.http.HttpHost;
@@ -9,7 +11,6 @@ import java.io.*;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Класс для взаимодействия с сайтом avito.ru
@@ -196,6 +197,17 @@ public class AvitoDriver {
         } catch (UnknownHostException e) {
             throw new IllegalStateException("Нет подключения к интернету");
         }
+    }
+
+    public Messenger getMessenger(String login, String password, Listener listener) throws IOException {
+        return new Messenger(login, password, listener);
+    }
+
+    public boolean existsAnnouncement(int id) throws IOException {
+        String url = "https://www.avito.ru/items/stat/" + id + "?step=0";
+        String page = Network.loadPage(url, proxy);
+
+        return page.contains("Статистика просмотров");
     }
 
 }
