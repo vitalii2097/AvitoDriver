@@ -6,6 +6,10 @@ import me.veppev.avitodriver.exception.AnnouncementNotExist;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Chat {
@@ -38,6 +42,10 @@ public class Chat {
         messenger.send(announcement.getId(), message);
     }
 
+    public void close() {
+        messenger.close(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,7 +57,6 @@ public class Chat {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(announcement, messenger);
     }
 

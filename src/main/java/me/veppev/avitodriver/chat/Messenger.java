@@ -10,11 +10,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,7 @@ public class Messenger {
     private final Listener listener;
     private Set<Chat> chats;
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private Map<Chat, ScheduledFuture<?>> futures = new HashMap<>();
 
     static {
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
@@ -56,14 +56,24 @@ public class Messenger {
             throw new IllegalArgumentException();
         }
         chats.add(chat);
-        scheduler.scheduleAtFixedRate(() -> {
+        ScheduledFuture<?> scheduledFuture = scheduler.scheduleAtFixedRate(() -> {
             try {
                 updateChat(chat);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 10, 30, TimeUnit.SECONDS);
+
+        futures.put(chat, scheduledFuture);
         return chat;
+    }
+
+    void close(Chat chat) {
+        if (chats.contains(chat)) {
+            futures.get(chat).cancel(false);
+            futures.remove(chat);
+            chats.remove(chat);
+        }
     }
 
     void send(int id, String message) {
