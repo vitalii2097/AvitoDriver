@@ -103,6 +103,9 @@ public class Messenger {
             boolean finded = false;
             while (!finded) {
                 try {
+                    if (driver.findElementsByClassName("notify-warning").size() != 0) {
+                        return;
+                    }
                     driver.findElementByTagName("textarea");
                     finded = true;
                 } catch (NoSuchElementException ignored) {
