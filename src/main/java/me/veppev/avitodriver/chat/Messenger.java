@@ -25,10 +25,7 @@ public class Messenger {
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private Map<Chat, ScheduledFuture<?>> futures = new HashMap<>();
 
-    static {
-        System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-    }
-
+    
     public Messenger(String login, String password, Listener listener) throws IOException {
         this.listener = listener;
         driver = new ChromeDriver();
