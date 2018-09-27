@@ -25,7 +25,7 @@ public class Messenger {
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private Map<Chat, ScheduledFuture<?>> futures = new HashMap<>();
 
-    
+
     public Messenger(String login, String password, Listener listener) throws IOException {
         this.listener = listener;
         driver = new ChromeDriver();
@@ -84,6 +84,9 @@ public class Messenger {
                 try {
                     if (driver.findElementsByClassName("notify-warning").size() != 0) {
                         return;
+                    }
+                    if (driver.findElementsByClassName("messenger-notify_alert").size() != 0) {
+                        driver.get(url);
                     }
                     inputField = driver.findElementByTagName("textarea");
                     finded = true;
