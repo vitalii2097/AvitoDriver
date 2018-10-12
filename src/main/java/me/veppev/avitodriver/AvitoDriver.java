@@ -210,4 +210,17 @@ public class AvitoDriver {
         return page.contains("Статистика просмотров");
     }
 
+    //---------------------------------------
+    String loadPhone(int id) {
+        String url = "http://m.avito.ru/" + id;
+        try {
+            return Parser.findValues(Network.loadPage(url, proxy), "href=\"tel:?\"").get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return "No phone";
+        } catch (IOException e) {
+            return "No phone (not loaded)";
+        }
+
+    }
+
 }

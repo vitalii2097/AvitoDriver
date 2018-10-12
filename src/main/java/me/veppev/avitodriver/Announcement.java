@@ -1,12 +1,11 @@
 package me.veppev.avitodriver;
 
-import java.io.File;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.*;
 
 /**
  * Представляет объявление с авито. Загружает информацию по "требованию"
@@ -21,6 +20,18 @@ public class Announcement {
     private List<String> imageUrls;
     private String metro;
     private String ownerName;
+    private String phone;
+
+    public String getPhone() {
+        phone = AvitoDriver.getInstance().loadPhone(getId());
+
+        return phone;
+    }
+
+    void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     static final Logger annLoger = LogManager.getLogger(Announcement.class.getSimpleName());
 
     private boolean loaded = false;
