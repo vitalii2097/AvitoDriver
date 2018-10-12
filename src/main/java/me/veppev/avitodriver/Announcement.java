@@ -1,8 +1,5 @@
 package me.veppev.avitodriver;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,14 +29,12 @@ public class Announcement {
         this.phone = phone;
     }
 
-    static final Logger annLoger = LogManager.getLogger(Announcement.class.getSimpleName());
 
     private boolean loaded = false;
     private AvitoDriver driver;
 
     private synchronized void load() {
         if (!loaded && driver != null) {
-            annLoger.info("Загрузка объявления "+ this.url);
             driver.loadAnnouncement(this);
 
             loaded = true;
